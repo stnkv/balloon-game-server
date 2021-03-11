@@ -16,6 +16,7 @@ import ru.stnkv.balloongame.domain.user.IUserInteractor;
  * @since 12.03.2021
  */
 @RestController
+@RequestMapping("user")
 public class UserController {
     @Autowired
     private IUserInteractor userInteractor;

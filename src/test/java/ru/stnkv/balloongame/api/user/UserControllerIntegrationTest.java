@@ -52,7 +52,7 @@ public class UserControllerIntegrationTest {
         var request = generator.nextObject(CreateUserRequest.class);
         when(userInteractor.createUser(any())).thenReturn(new UserEntity(expected.getId(), request.getUsername()));
 
-        var resultAsString = mockMvc.perform(post("/create")
+        var resultAsString = mockMvc.perform(post("/user/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(request)))
                 .andExpect(status().isCreated())
@@ -70,7 +70,7 @@ public class UserControllerIntegrationTest {
 
         when(userInteractor.getUserById(any())).thenReturn(new UserEntity(expected.getId(), expected.getUsername()));
 
-        var resultAsString = mockMvc.perform(get("/get").param("id", expected.getId()))
+        var resultAsString = mockMvc.perform(get("/user/get").param("id", expected.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
