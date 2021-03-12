@@ -11,7 +11,7 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          GHCR_IMAGE=ghcr.io/${{ github.repository_owner }}/stnkv-backend
+          GHCR_IMAGE=ghcr.io/${{ github.repository_owner }}/balloon-game-server
           VERSION=${GITHUB_REF#refs/*/}
           TAGS="${TAGS},${GHCR_IMAGE}:${VERSION},${GHCR_IMAGE}:latest"
           echo ::set-output name=tags::${TAGS}
