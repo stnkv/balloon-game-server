@@ -36,3 +36,20 @@ jobs:
           tags: ${{ steps.prepare.outputs.tags }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Run playbook for deploy
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: deploy-playbook.yml
+          directory: ./ansible/
+          key: ${{secrets.SSH_RSA_KEY}}
+          inventory: |
+            [prod]
+            ${{secrets.IP_ADDR_PROD}}
+          options:
+            --extra-vars "GHCR_USERNAME=${{ github.repository_owner }} GHCR_PASSWORD=${{ secrets.CR_PAT }}"
