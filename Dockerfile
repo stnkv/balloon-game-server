@@ -3,7 +3,7 @@ FROM gradle:jdk15 as build
 RUN mkdir -p /app
 WORKDIR /app
 
-COPY src/main/java/ru/stnkv ./
+COPY ./ ./
 RUN gradle bootJar
 
 ###
@@ -11,7 +11,7 @@ RUN gradle bootJar
 
 FROM openjdk:15
 
-COPY --from=build /app/build/libs/* /app/
+COPY --from=build /app/build/libs/*.jar /app/app.jar
 WORKDIR /app
 
-ENTRYPOINT ["java","-jar","/app/stnkv-backend.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]

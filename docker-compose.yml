@@ -2,13 +2,11 @@ version: "3.3"
 services:
   # Backend
   backend:
-    image: ghcr.io/stnkv/balloon-game-server:latest
+    image: balloon-game-server:latest
     container_name: balloon-game-server
     restart: unless-stopped
     networks:
       - stnkv-network
-    environment:
-      - GIPHY_API_KEY=${GIPHY_API_KEY}
   # Web server
   webserver:
     image: nginx:alpine
