@@ -1,0 +1,26 @@
+---
+- name: deploy
+  hosts: all
+  remote_user: root
+
+  tasks:
+    - name: copy nginx config
+      copy:
+        src: ../nginx/
+        dest: ./nginx/
+        owner: root
+        group: root
+    - name: copy docker compose
+      copy:
+        src: ../docker-compose.yml
+        dest: ./docker-compose.yml
+        owner: root
+        group: root
+    - name: update container
+      shell: docker login -u "{{ GHCR_USERNAME }}" -p "{{ GHCR_PASSWORD }}" ghcr.io
+    - name: update container
+      shell: docker-compose pull webserver
+    - name: stop container
+      shell: docker-compose stop
+    - name: run container
+      shell: docker-compose up -d
