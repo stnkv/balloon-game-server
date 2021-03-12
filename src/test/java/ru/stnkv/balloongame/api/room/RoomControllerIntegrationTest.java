@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.stnkv.balloongame.api.room.dto.CreateRoomRequest;
 import ru.stnkv.balloongame.api.room.dto.CreateRoomResponse;
+import ru.stnkv.balloongame.api.room.dto.ParticipantResponse;
 import ru.stnkv.balloongame.api.room.dto.RoomResponse;
 import ru.stnkv.balloongame.domain.room.IRoomInteractor;
 import ru.stnkv.balloongame.domain.room.RoomEntity;
@@ -21,6 +22,7 @@ import ru.stnkv.balloongame.domain.user.UserEntity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,9 +57,10 @@ class RoomControllerIntegrationTest {
 
     @Test
     public void shouldCreateRoomAndReturnId() throws Exception {
+        var participants = generator.objects(UserEntity.class, 5).collect(Collectors.toList());
         var res = generator.nextObject(CreateRoomResponse.class);
         var req = generator.nextObject(CreateRoomRequest.class);
-        when(roomInteractor.create(any())).thenReturn(new RoomEntity(res.getId(), req.getName()));
+        when(roomInteractor.create(any())).thenReturn(new RoomEntity(res.getId(), req.getName(), participants));
 
         var result = mockMvc.perform(post("/room/create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -74,14 +77,13 @@ class RoomControllerIntegrationTest {
     @Test
     public void shouldGetAllRooms() throws Exception {
         var participants = generator.objects(UserEntity.class, 5).collect(Collectors.toList());
-        var rooms = generator.objects(RoomEntity.class, 5).collect(Collectors.toList());
+        var rooms = List.of(new RoomEntity(generator.toString(), generator.toString(), participants));
         var expected = rooms.stream().map(e -> {
-
-            return new RoomResponse(e.getId(), e.getName(), participants);
+            return new RoomResponse(e.getId(), e.getName(), participants.stream().map(u -> new ParticipantResponse(u.getId(), u.getUsername())).collect(Collectors.toUnmodifiableList()));
         }).collect(Collectors.toList());
         when(roomInteractor.getAllRooms()).thenReturn(rooms);
 
-        var result = mockMvc.perform(get("/room/rooms"))
+        var result = mockMvc.perform(get("/room/list"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
@@ -93,8 +95,10 @@ class RoomControllerIntegrationTest {
 
     @Test
     public void shouldGetRoomById() throws Exception {
-        var expected = generator.nextObject(RoomResponse.class);
-        when(roomInteractor.getRoomBy(expected.getId())).thenReturn(new RoomEntity(expected.getId(), expected.getName()));
+        var participants = generator.objects(UserEntity.class, 5).collect(Collectors.toList());
+        var room = new RoomEntity(generator.toString(), generator.toString(), participants);
+        var expected = new RoomResponse(room.getId(), room.getName(), participants.stream().map(u -> new ParticipantResponse(u.getId(), u.getUsername())).collect(Collectors.toUnmodifiableList()));
+        when(roomInteractor.getRoomBy(expected.getId())).thenReturn(room);
 
         var result = mockMvc.perform(get("/room/get").param("id", expected.getId()))
                 .andExpect(status().isOk())

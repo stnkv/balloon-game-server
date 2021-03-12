@@ -7,8 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.stnkv.balloongame.api.room.dto.CreateRoomRequest;
 import ru.stnkv.balloongame.api.room.dto.CreateRoomResponse;
+import ru.stnkv.balloongame.api.room.dto.ParticipantResponse;
 import ru.stnkv.balloongame.api.room.dto.RoomResponse;
 import ru.stnkv.balloongame.domain.room.IRoomInteractor;
+import ru.stnkv.balloongame.domain.user.UserEntity;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -34,7 +36,7 @@ public class RoomController {
     public ResponseEntity<Collection<RoomResponse>> list() {
         var rooms = roomInteractor.getAllRooms();
         var result = rooms.stream()
-                .map(r -> new RoomResponse(r.getId(), r.getName()))
+                .map(r -> new RoomResponse(r.getId(), r.getName(), convert(r.getParticipants())))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -42,6 +44,10 @@ public class RoomController {
     @GetMapping("/get")
     public ResponseEntity<RoomResponse> getBy(@RequestParam String id) {
         var room = roomInteractor.getRoomBy(id);
-        return new ResponseEntity<>(new RoomResponse(room.getId(), room.getName()), HttpStatus.OK);
+        return new ResponseEntity<>(new RoomResponse(room.getId(), room.getName(), convert(room.getParticipants())), HttpStatus.OK);
+    }
+
+    private Collection<ParticipantResponse> convert(Collection<UserEntity> users) {
+        return users.stream().map(u -> new ParticipantResponse(u.getId(), u.getUsername())).collect(Collectors.toUnmodifiableList());
     }
 }

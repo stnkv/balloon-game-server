@@ -1,6 +1,7 @@
 package ru.stnkv.balloongame.domain.room;
 
 import org.springframework.stereotype.Component;
+import ru.stnkv.balloongame.domain.user.UserEntity;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -14,16 +15,20 @@ import java.util.List;
 public class RoomInteractor implements IRoomInteractor {
     @Override
     public RoomEntity create(String name) {
-        return new RoomEntity("1", name);
+        var par = List.of(new UserEntity("1", "username"), new UserEntity("2", "username"), new UserEntity("3", "username"));
+        return new RoomEntity("1", name, par);
     }
 
     @Override
     public Collection<RoomEntity> getAllRooms() {
-        return List.of(new RoomEntity("1", "name"), new RoomEntity("2", "name"));
+        var par = List.of(new UserEntity("1", "username"), new UserEntity("2", "username"), new UserEntity("3", "username"));
+        var par2 = List.of(new UserEntity("4", "username"), new UserEntity("5", "username"), new UserEntity("6", "username"));
+        return List.of(new RoomEntity("1", "roomname", par), new RoomEntity("2", "roomname", par));
     }
 
     @Override
     public RoomEntity getRoomBy(String id) {
-        return new RoomEntity(id, "name");
+        var par = List.of(new UserEntity("1", "username"), new UserEntity("2", "username"), new UserEntity("3", "username"));
+        return new RoomEntity(id, "roomname", par);
     }
 }
