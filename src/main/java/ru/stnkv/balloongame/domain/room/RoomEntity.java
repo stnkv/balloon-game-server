@@ -3,6 +3,9 @@ package ru.stnkv.balloongame.domain.room;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import ru.stnkv.balloongame.domain.user.UserEntity;
+
+import java.util.Collection;
 
 /**
  * @author ysitnikov
@@ -14,9 +17,11 @@ import lombok.ToString;
 public class RoomEntity {
     private final String id;
     private final String name;
+    private final Collection<UserEntity> participants;
 
-    public RoomEntity(String id, String name) {
+    public RoomEntity(String id, String name, Collection<UserEntity> participants) {
         this.id = id;
         this.name = name;
+        this.participants = participants;
     }
 }

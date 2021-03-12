@@ -17,8 +17,10 @@ import ru.stnkv.balloongame.api.room.dto.CreateRoomResponse;
 import ru.stnkv.balloongame.api.room.dto.RoomResponse;
 import ru.stnkv.balloongame.domain.room.IRoomInteractor;
 import ru.stnkv.balloongame.domain.room.RoomEntity;
+import ru.stnkv.balloongame.domain.user.UserEntity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,11 +73,15 @@ class RoomControllerIntegrationTest {
 
     @Test
     public void shouldGetAllRooms() throws Exception {
-        var list = generator.objects(RoomEntity.class, 5).collect(Collectors.toList());
-        var expected = list.stream().map(e -> new RoomResponse(e.getId(), e.getName())).collect(Collectors.toList());
-        when(roomInteractor.getAllRooms()).thenReturn(list);
+        var participants = generator.objects(UserEntity.class, 5).collect(Collectors.toList());
+        var rooms = generator.objects(RoomEntity.class, 5).collect(Collectors.toList());
+        var expected = rooms.stream().map(e -> {
 
-        var result = mockMvc.perform(get("/room/list"))
+            return new RoomResponse(e.getId(), e.getName(), participants);
+        }).collect(Collectors.toList());
+        when(roomInteractor.getAllRooms()).thenReturn(rooms);
+
+        var result = mockMvc.perform(get("/room/rooms"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
