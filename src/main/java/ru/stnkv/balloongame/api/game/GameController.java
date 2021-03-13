@@ -1,8 +1,11 @@
 package ru.stnkv.balloongame.api.game;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,15 +19,16 @@ import org.springframework.web.util.HtmlUtils;
 //@RequestMapping("game")
 public class GameController {
 
-    @MessageMapping("/welcome")
-    @SendTo("/topic/greetings")
-    public String greeting(String payload) {
-        System.out.println("Generating new greeting message for " + payload);
-        return "Hello, " + payload + "!";
-    }
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
-    @SubscribeMapping("/chat")
-    public HelloMessage sendWelcomeMessageOnSubscription() {
-        return new HelloMessage("Hello World!");
+    @MessageMapping("/chat")
+    public void processMessage(@Payload ChatMessage chatMessage) {
+        messagingTemplate.convertAndSendToUser(
+                chatMessage.getRecipientId(),"/queue/messages",
+                new ChatNotification(
+                        chatMessage.getId(),
+                        chatMessage.getSenderId(),
+                        chatMessage.()));
     }
 }

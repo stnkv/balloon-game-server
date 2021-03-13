@@ -1,5 +1,9 @@
 package ru.stnkv.balloongame.api.game;
 
+import com.google.gson.Gson;
+import org.jeasy.random.EasyRandom;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,10 +21,7 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,70 +36,41 @@ class GameControllerIntegrationTest {
     private Integer port;
 
     private WebSocketStompClient webSocketStompClient;
+    private EasyRandom generator;
+
 
     @BeforeEach
     public void setup() {
         this.webSocketStompClient = new WebSocketStompClient(new SockJsClient(
                 List.of(new WebSocketTransport(new StandardWebSocketClient()))));
-    }
-
-
-    @Test
-    public void verifyGreetingIsReceived() throws Exception {
-
-        BlockingQueue<String> blockingQueue = new ArrayBlockingQueue(1);
-
-        webSocketStompClient.setMessageConverter(new StringMessageConverter());
-
-        StompSession session = webSocketStompClient
-                .connect(getWsPath(), new StompSessionHandlerAdapter() {})
-                .get(1, SECONDS);
-
-        session.subscribe("/topic/greetings", new StompFrameHandler() {
-
-            @Override
-            public Type getPayloadType(StompHeaders headers) {
-                return String.class;
-            }
-
-            @Override
-            public void handleFrame(StompHeaders headers, Object payload) {
-                System.out.println("Received message: " + payload);
-                blockingQueue.add((String) payload);
-            }
-        });
-
-        session.send("/app/welcome", "Mike");
-
-        assertEquals("Hello, Mike!", blockingQueue.poll(1, SECONDS));
+        this.webSocketStompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        generator = new EasyRandom();
     }
 
     @Test
-    public void verifyWelcomeMessageIsSent() throws Exception {
-        CountDownLatch latch = new CountDownLatch(1);
-
-        webSocketStompClient.setMessageConverter(new MappingJackson2MessageConverter());
-
-        StompSession session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {}).get(1, SECONDS);
-
-        session.subscribe("/app/chat", new StompFrameHandler() {
-
+    public void shouldGetMessage() throws Exception {
+        // Подготовка
+        var msg = generator.nextObject(ChatMessage.class);
+        var expected = new ChatNotification(msg.getId(), msg.getSenderId(), msg.getRecipientId());
+        var future = new CompletableFuture<ChatNotification>();
+        var session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {
+        }).get(1, SECONDS);
+        session.subscribe("/user/"+ msg.getRecipientId() + "/queue/messages", new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {
-                return HelloMessage.class;
+                return ChatNotification.class;
             }
-
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
-                latch.countDown();
+                future.complete((ChatNotification) payload);
             }
         });
+        // Вызов
+        session.send("/app/chat", msg);
+        // Проверка
+        Assertions.assertEquals(expected, future.get(1, SECONDS));
 
-        if (!latch.await(1, TimeUnit.SECONDS)) {
-            fail("Message not received");
-        }
     }
-
 
     private String getWsPath() {
         return String.format("ws://localhost:%d/ws-endpoint", port);
