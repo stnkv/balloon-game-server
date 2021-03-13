@@ -17,4 +17,5 @@ import java.io.Serializable;
 @ToString
 public class CreateRoomRequest implements Serializable {
     private String name;
+    private String userId;
 }

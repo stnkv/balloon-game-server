@@ -16,4 +16,5 @@ import lombok.NoArgsConstructor;
 public class InflateNotification {
     private String roomId;
     private String userId;
+    private Double size;
 }

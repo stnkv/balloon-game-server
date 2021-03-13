@@ -15,4 +15,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class StartGameRequest {
     private String roomId;
+    private String userId;
 }

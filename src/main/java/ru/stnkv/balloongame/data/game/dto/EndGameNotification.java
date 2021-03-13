@@ -15,4 +15,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class EndGameNotification {
     private String roomId;
+    private String winnerId;
 }
