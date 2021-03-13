@@ -19,11 +19,11 @@ public class GameController {
 
     @MessageMapping("/game/start")
     public void processStartGame(@Payload StartGameRequest request) throws Exception {
-        gameInteractor.sendStartGameEvent(request.getRoomId());
+        gameInteractor.sendStartGameEvent(request.getRoomId(), request.getUserId());
     }
 
     @MessageMapping("/game/inflate")
     public void processInflate(@Payload InflateEventReq request) {
-        gameInteractor.sendInflateEventPartitions(request.getRoomId(), request.getUserId());
+        gameInteractor.sendInflateEventPartitions(request.getRoomId(), request.getUserId(), request.getSize());
     }
 }

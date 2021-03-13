@@ -1,4 +1,4 @@
-package ru.stnkv.balloongame.domain.game;
+package ru.stnkv.balloongame.domain.game.checker;
 
 /**
  * @author ysitnikov

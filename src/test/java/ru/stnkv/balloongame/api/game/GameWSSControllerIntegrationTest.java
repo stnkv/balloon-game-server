@@ -4,7 +4,6 @@ import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -24,7 +23,10 @@ import ru.stnkv.balloongame.data.game.dto.InflateNotification;
 import ru.stnkv.balloongame.data.game.dto.StartGameNotification;
 import ru.stnkv.balloongame.domain.entity.RoomEntity;
 import ru.stnkv.balloongame.domain.entity.UserEntity;
-import ru.stnkv.balloongame.domain.game.ICheckWinner;
+import ru.stnkv.balloongame.domain.game.checker.ICheckWinner;
+import ru.stnkv.balloongame.domain.game.strategy.chance.IGetChance;
+import ru.stnkv.balloongame.domain.game.strategy.duration.IGetDuration;
+import ru.stnkv.balloongame.domain.game.strategy.question.IGetQuestionNumber;
 import ru.stnkv.balloongame.domain.room.IRoomInteractor;
 
 import java.lang.reflect.Type;
@@ -48,9 +50,14 @@ class GameWSSControllerIntegrationTest {
 
     @MockBean
     private ICheckWinner checkWinner;
-
     @MockBean
     private IRoomInteractor roomInteractor;
+    @MockBean
+    private IGetQuestionNumber getQuestionNumber;
+    @MockBean
+    private IGetChance getChance;
+    @MockBean
+    private IGetDuration getDuration;
 
     private WebSocketStompClient webSocketStompClient;
     private EasyRandom generator;
@@ -75,6 +82,10 @@ class GameWSSControllerIntegrationTest {
         expected.setChance(100);
         expected.setDuration(100);
         expected.setQuestionNumber(1);
+
+        when(getQuestionNumber.get()).thenReturn(1);
+        when(getChance.get()).thenReturn(100);
+        when(getDuration.get()).thenReturn(100);
 
         var future = new CompletableFuture<StartGameNotification>();
         var room = mock(RoomEntity.class);
@@ -105,7 +116,7 @@ class GameWSSControllerIntegrationTest {
         var expected = generator.nextObject(InflateNotification.class);
         expected.setRoomId(payload.getRoomId());
         expected.setUserId(payload.getUserId());
-        expected.setSize(0.1D);
+        expected.setSize(payload.getSize());
 
         var future = new CompletableFuture<InflateNotification>();
         StompSession session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {
