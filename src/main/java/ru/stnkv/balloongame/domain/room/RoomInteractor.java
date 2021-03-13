@@ -20,6 +20,11 @@ public class RoomInteractor implements IRoomInteractor {
     }
 
     @Override
+    public void join(String roomId, String userId) {
+        //TODO: РЕАЛИЗОВАТЬ
+    }
+
+    @Override
     public Collection<RoomEntity> getAllRooms() {
         var par = List.of(new UserEntity("1", "username"), new UserEntity("2", "username"), new UserEntity("3", "username"));
         var par2 = List.of(new UserEntity("4", "username"), new UserEntity("5", "username"), new UserEntity("6", "username"));

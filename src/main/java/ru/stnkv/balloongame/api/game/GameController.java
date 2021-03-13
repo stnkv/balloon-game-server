@@ -30,14 +30,4 @@ public class GameController {
     public void processInflate(@Payload InflateEventReq request) {
         gameInteractor.sendInflateEventPartitions(request.getRoomId(), request.getUserId());
     }
-
-    @MessageMapping("/game/end")
-    public void processEndGame(@Payload InflateEventReq request) {
-        gameInteractor.sendEndGameEvent(request.getRoomId());
-    }
-
-    @PostMapping("/game/confirm")
-    public void confirmForStartGame(@RequestBody ConfirmStartGameReq req) {
-        gameInteractor.sendStartGameEvent(req.getRoomId());
-    }
 }

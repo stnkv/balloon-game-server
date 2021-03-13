@@ -9,7 +9,7 @@ import java.util.Collection;
 public interface IRoomInteractor {
 
     RoomEntity create(String name);
-
+    void join(String roomId, String userId);
     Collection<RoomEntity> getAllRooms();
     RoomEntity getRoomBy(String id);
 }

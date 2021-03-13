@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.stnkv.balloongame.api.room.dto.CreateRoomRequest;
-import ru.stnkv.balloongame.api.room.dto.CreateRoomResponse;
-import ru.stnkv.balloongame.api.room.dto.ParticipantResponse;
-import ru.stnkv.balloongame.api.room.dto.RoomResponse;
+import ru.stnkv.balloongame.api.room.dto.*;
 import ru.stnkv.balloongame.domain.room.IRoomInteractor;
 import ru.stnkv.balloongame.domain.user.UserEntity;
 
@@ -39,6 +36,11 @@ public class RoomController {
                 .map(r -> new RoomResponse(r.getId(), r.getName(), convert(r.getParticipants())))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/join")
+    public void join(@RequestBody JoinToRoomRequest request) {
+        roomInteractor.join(request.getRoomId(), request.getUserId());
     }
 
     @GetMapping("/get")

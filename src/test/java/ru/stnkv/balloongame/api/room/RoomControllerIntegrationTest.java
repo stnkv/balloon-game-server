@@ -12,10 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.stnkv.balloongame.api.room.dto.CreateRoomRequest;
-import ru.stnkv.balloongame.api.room.dto.CreateRoomResponse;
-import ru.stnkv.balloongame.api.room.dto.ParticipantResponse;
-import ru.stnkv.balloongame.api.room.dto.RoomResponse;
+import ru.stnkv.balloongame.api.room.dto.*;
 import ru.stnkv.balloongame.domain.room.IRoomInteractor;
 import ru.stnkv.balloongame.domain.room.RoomEntity;
 import ru.stnkv.balloongame.domain.user.UserEntity;
@@ -91,6 +88,16 @@ class RoomControllerIntegrationTest {
                 .getContentAsString();
 
         assertEquals(gson.toJson(expected), result);
+    }
+
+    @Test
+    public void shouldJoinParticipiantInRoom() throws Exception {
+        var participant = generator.nextObject(JoinToRoomRequest.class);
+
+        mockMvc.perform(post("/room/join")
+                .content(gson.toJson(participant))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
