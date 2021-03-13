@@ -21,6 +21,8 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.4.3'
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.5.5'
+
 
 	implementation 'junit:junit:4.12'
 	compileOnly 'org.projectlombok:lombok'
