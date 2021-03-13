@@ -57,8 +57,9 @@ class RoomControllerIntegrationTest {
         var participants = generator.objects(UserEntity.class, 5).collect(Collectors.toList());
         var res = generator.nextObject(CreateRoomResponse.class);
         var req = generator.nextObject(CreateRoomRequest.class);
+        var user = generator.nextObject(User.class);
         when(roomDAO.save(any())).thenReturn(new Room(res.getId(), req.getName(), participants));
-
+        when(userDAO.findById(any())).thenReturn(java.util.Optional.of(user));
         var result = mockMvc.perform(post("/room/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(req)))

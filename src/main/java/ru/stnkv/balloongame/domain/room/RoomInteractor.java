@@ -24,8 +24,11 @@ public class RoomInteractor implements IRoomInteractor {
     private IUserRepository userRepository;
 
     @Override
-    public RoomEntity create(String name) {
-        return roomRepository.create(new CreateRoomEntity(name));
+    public RoomEntity create(String name, String userId) throws Exception {
+        UserEntity userEntity = userRepository.getUserById(userId);
+        RoomEntity roomEntity = roomRepository.create(new CreateRoomEntity(name));
+        roomRepository.join(roomEntity, userEntity);
+        return roomEntity;
     }
 
     @Override

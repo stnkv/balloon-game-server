@@ -24,8 +24,8 @@ public class RoomController {
     private IRoomInteractor roomInteractor;
 
     @PostMapping("/create")
-    public ResponseEntity<CreateRoomResponse> create(@RequestBody CreateRoomRequest body) {
-        var room = roomInteractor.create(body.getName());
+    public ResponseEntity<CreateRoomResponse> create(@RequestBody CreateRoomRequest body) throws Exception {
+        var room = roomInteractor.create(body.getName(), body.getUserId());
         return new ResponseEntity<>(new CreateRoomResponse(room.getId()), HttpStatus.CREATED);
     }
 

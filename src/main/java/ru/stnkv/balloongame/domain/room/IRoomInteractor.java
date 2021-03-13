@@ -10,7 +10,7 @@ import java.util.Collection;
  */
 public interface IRoomInteractor {
 
-    RoomEntity create(String name);
+    RoomEntity create(String name, String userId) throws Exception;
     void join(String roomId, String userId) throws Exception;
     Collection<RoomEntity> getAllRooms();
     RoomEntity getRoomBy(String id) throws Exception;
