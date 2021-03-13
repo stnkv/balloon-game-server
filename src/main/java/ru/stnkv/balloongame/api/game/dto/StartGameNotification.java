@@ -5,14 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
+/**
+ * @author ysitnikov
+ * @since 13.03.2021
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatMessage {
-    private String id;
-    private String senderId;
-    private String recipientId;
+public class StartGameNotification {
+    private String roomId;
 }

@@ -1,6 +1,7 @@
 package ru.stnkv.balloongame.api.game;
 
 import org.jeasy.random.EasyRandom;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,18 +10,18 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
-import ru.stnkv.balloongame.api.game.dto.ChatMessage;
-import ru.stnkv.balloongame.api.game.dto.ChatNotification;
-import ru.stnkv.balloongame.api.game.dto.HelloMessage;
+import ru.stnkv.balloongame.api.game.dto.*;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -46,28 +47,32 @@ class GameControllerIntegrationTest {
     }
 
     @Test
-    public void shouldGetMessage() throws Exception {
-        // Подготовка
-        var msg = generator.nextObject(ChatMessage.class);
-        var expected = new ChatNotification(msg.getId(), msg.getSenderId(), "username");
-        var future = new CompletableFuture<ChatNotification>();
-        var session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {
+    public void shouldCreateGame() throws Exception {
+
+    }
+
+    @Test
+    public void shouldSendStartGameEvent() throws Exception {
+        //Подготовка
+        var payload = generator.nextObject(StartGameRequest.class);
+        var expected = new StartGameNotification(payload.getRoomId());
+        var future = new CompletableFuture<StartGameNotification>();
+        StompSession session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {
         }).get(1, SECONDS);
-        session.subscribe("/user/"+ msg.getRecipientId() + "/queue/messages", new StompFrameHandler() {
+        //Вызов
+        session.subscribe("/game/"+ payload.getRoomId() +"/start/events", new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {
-                return ChatNotification.class;
+                return StartGameNotification.class;
             }
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
-                future.complete((ChatNotification) payload);
+                future.complete((StartGameNotification) payload);
             }
         });
-        // Вызов
-        session.send("/app/chat", msg);
-        // Проверка
+        session.send("/app/game/start", payload);
+        //Проверка
         Assertions.assertEquals(expected, future.get(1, SECONDS));
-
     }
 
     private String getWsPath() {

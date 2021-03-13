@@ -13,8 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatNotification {
-    private String id;
-    private String senderId;
-    private String senderName;
+public class StartGameRequest {
+    private String roomId;
 }
