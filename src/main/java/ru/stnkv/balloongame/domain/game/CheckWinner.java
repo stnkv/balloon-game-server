@@ -11,6 +11,6 @@ public class CheckWinner implements ICheckWinner{
     @Override
     public boolean check(String userId) {
         //TODO: Харкодим что пользователь сразу же выйграл
-        return true;
+        return false;
     }
 }

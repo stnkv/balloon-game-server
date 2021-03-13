@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -20,12 +21,15 @@ import ru.stnkv.balloongame.api.game.dto.start.StartGameRequest;
 import ru.stnkv.balloongame.data.game.dto.EndGameNotification;
 import ru.stnkv.balloongame.data.game.dto.InflateNotification;
 import ru.stnkv.balloongame.data.game.dto.StartGameNotification;
+import ru.stnkv.balloongame.domain.game.ICheckWinner;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * @author ysitnikov
@@ -35,6 +39,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 class GameControllerIntegrationTest {
     @LocalServerPort
     private Integer port;
+
+    @MockBean
+    private ICheckWinner checkWinner;
 
     private WebSocketStompClient webSocketStompClient;
     private EasyRandom generator;
@@ -107,6 +114,7 @@ class GameControllerIntegrationTest {
         var future = new CompletableFuture<>();
         StompSession session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {
         }).get(1, SECONDS);
+        when(checkWinner.check(any())).thenReturn(true);
 
         session.subscribe("/game/"+ payload.getRoomId() +"/end/events", new StompFrameHandler() {
             @Override
