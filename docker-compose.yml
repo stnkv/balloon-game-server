@@ -26,8 +26,6 @@ services:
     container_name: redis
     restart: unless-stopped
     tty: true
-    ports:
-      - "6379:6379"
     networks:
       - stnkv-network
 
