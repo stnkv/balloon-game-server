@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<GetUserResponse> get(@RequestParam String id) {
+    public ResponseEntity<GetUserResponse> get(@RequestParam String id) throws Exception {
         var user = userInteractor.getUserById(id);
         return new ResponseEntity<>(new GetUserResponse(user.getId(), user.getUsername()), HttpStatus.OK);
     }

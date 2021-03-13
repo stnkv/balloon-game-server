@@ -8,6 +8,5 @@ import ru.stnkv.balloongame.domain.entity.UserEntity;
  */
 public interface IUserRepository {
     UserEntity createUser(String name);
-    UserEntity getUserBy(String userId);
-    
+    UserEntity getUserById(String userId) throws Exception;
 }

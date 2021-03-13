@@ -10,5 +10,5 @@ public interface IUserInteractor {
 
     UserEntity createUser(String username);
 
-    UserEntity getUserById(String id);
+    UserEntity getUserById(String id) throws Exception;
 }

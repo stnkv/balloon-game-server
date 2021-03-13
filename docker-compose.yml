@@ -20,6 +20,14 @@ services:
       - stnkv-network
     volumes:
       - ./nginx:/etc/nginx/conf.d
+  # Redis
+  redis:
+    image: redis:alpine3.13
+    container_name: redis
+    restart: unless-stopped
+    tty: true
+    networks:
+      - stnkv-network
 
 networks:
   stnkv-network:
