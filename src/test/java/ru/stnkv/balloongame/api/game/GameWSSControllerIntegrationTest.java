@@ -21,6 +21,8 @@ import ru.stnkv.balloongame.api.game.dto.start.StartGameRequest;
 import ru.stnkv.balloongame.data.game.dto.EndGameNotification;
 import ru.stnkv.balloongame.data.game.dto.InflateNotification;
 import ru.stnkv.balloongame.data.game.dto.StartGameNotification;
+import ru.stnkv.balloongame.data.room.db.RoomDAO;
+import ru.stnkv.balloongame.data.room.db.dto.Room;
 import ru.stnkv.balloongame.domain.entity.RoomEntity;
 import ru.stnkv.balloongame.domain.entity.UserEntity;
 import ru.stnkv.balloongame.domain.game.checker.ICheckWinner;
@@ -52,6 +54,8 @@ class GameWSSControllerIntegrationTest {
     private ICheckWinner checkWinner;
     @MockBean
     private IRoomInteractor roomInteractor;
+    @MockBean
+    private RoomDAO roomDAO;
     @MockBean
     private IGetQuestionNumber getQuestionNumber;
     @MockBean

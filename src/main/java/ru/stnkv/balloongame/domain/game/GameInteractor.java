@@ -11,6 +11,8 @@ import ru.stnkv.balloongame.domain.game.strategy.duration.IGetDuration;
 import ru.stnkv.balloongame.domain.game.strategy.question.IGetQuestionNumber;
 import ru.stnkv.balloongame.domain.repository.IGameRepository;
 import ru.stnkv.balloongame.domain.room.IRoomInteractor;
+import ru.stnkv.balloongame.domain.schedulers.EndGameScheduler;
+import ru.stnkv.balloongame.domain.schedulers.IEndGameScheduler;
 
 /**
  * @author ysitnikov
@@ -30,17 +32,21 @@ public class GameInteractor implements IGameInteractor {
     private IGetChance getChance;
     @Autowired
     private IGetQuestionNumber getQuestionNumber;
+    @Autowired
+    private IEndGameScheduler endGameScheduler;
 
     @Override
     public void sendStartGameEvent(String roomId, String userId) throws Exception {
         //TODO: Проверка что игра в статусе создана
-        gameRepository.sendStartGameEvent(StartGameEntity.builder()
+        StartGameEntity entity = StartGameEntity.builder()
                 .roomId(roomId)
                 .duration(getDuration.get())
                 .chance(getChance.get())
                 .questionNumber(getQuestionNumber.get())
                 .participants(roomInteractor.getRoomBy(roomId).getParticipants())
-                .build());
+                .build();
+        gameRepository.sendStartGameEvent(entity);
+        endGameScheduler.start(entity);
     }
 
     @Override
