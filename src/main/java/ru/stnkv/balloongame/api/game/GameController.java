@@ -29,6 +29,6 @@ public class GameController {
                 new ChatNotification(
                         chatMessage.getId(),
                         chatMessage.getSenderId(),
-                        chatMessage.()));
+                        "username"));
     }
 }

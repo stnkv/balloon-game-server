@@ -51,7 +51,7 @@ class GameControllerIntegrationTest {
     public void shouldGetMessage() throws Exception {
         // Подготовка
         var msg = generator.nextObject(ChatMessage.class);
-        var expected = new ChatNotification(msg.getId(), msg.getSenderId(), msg.getRecipientId());
+        var expected = new ChatNotification(msg.getId(), msg.getSenderId(), "username");
         var future = new CompletableFuture<ChatNotification>();
         var session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {
         }).get(1, SECONDS);
