@@ -16,7 +16,7 @@ import ru.stnkv.balloongame.domain.repository.IUserRepository;
 public class UserRepository implements IUserRepository {
     @Autowired
     private UserDAO userDAO;
-    private IdGenerator idGenerator = new IdGenerator();
+    private final IdGenerator idGenerator = new IdGenerator();
 
     @Override
     public UserEntity createUser(String name) {

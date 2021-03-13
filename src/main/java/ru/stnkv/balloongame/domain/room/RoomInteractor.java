@@ -7,6 +7,7 @@ import ru.stnkv.balloongame.domain.entity.RoomEntity;
 import ru.stnkv.balloongame.domain.entity.UserEntity;
 import ru.stnkv.balloongame.domain.repository.IRoomRepository;
 import ru.stnkv.balloongame.domain.repository.IUserRepository;
+import ru.stnkv.balloongame.domain.schedulers.IEndGameScheduler;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,6 +23,9 @@ public class RoomInteractor implements IRoomInteractor {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private IEndGameScheduler endGameScheduler;
 
     @Override
     public RoomEntity create(String name, String userId) throws Exception {
@@ -40,6 +44,7 @@ public class RoomInteractor implements IRoomInteractor {
 
     @Override
     public Collection<RoomEntity> getAllRooms() {
+        endGameScheduler.start();
         return roomRepository.getAllRooms();
     }
 
