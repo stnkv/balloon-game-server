@@ -1,6 +1,7 @@
 package ru.stnkv.balloongame.domain.user;
 
 import org.springframework.stereotype.Component;
+import ru.stnkv.balloongame.domain.entity.UserEntity;
 
 /**
  * @author ysitnikov

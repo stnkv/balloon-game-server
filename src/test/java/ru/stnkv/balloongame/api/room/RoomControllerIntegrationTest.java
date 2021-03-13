@@ -2,8 +2,6 @@ package ru.stnkv.balloongame.api.room;
 
 import com.google.gson.Gson;
 import org.jeasy.random.EasyRandom;
-import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.stnkv.balloongame.api.room.dto.*;
 import ru.stnkv.balloongame.domain.room.IRoomInteractor;
-import ru.stnkv.balloongame.domain.room.RoomEntity;
-import ru.stnkv.balloongame.domain.user.UserEntity;
+import ru.stnkv.balloongame.domain.entity.RoomEntity;
+import ru.stnkv.balloongame.domain.entity.UserEntity;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 

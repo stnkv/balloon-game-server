@@ -4,6 +4,7 @@ import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -21,14 +22,19 @@ import ru.stnkv.balloongame.api.game.dto.start.StartGameRequest;
 import ru.stnkv.balloongame.data.game.dto.EndGameNotification;
 import ru.stnkv.balloongame.data.game.dto.InflateNotification;
 import ru.stnkv.balloongame.data.game.dto.StartGameNotification;
+import ru.stnkv.balloongame.domain.entity.RoomEntity;
+import ru.stnkv.balloongame.domain.entity.UserEntity;
 import ru.stnkv.balloongame.domain.game.ICheckWinner;
+import ru.stnkv.balloongame.domain.room.IRoomInteractor;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -42,6 +48,9 @@ class GameWSSControllerIntegrationTest {
 
     @MockBean
     private ICheckWinner checkWinner;
+
+    @MockBean
+    private IRoomInteractor roomInteractor;
 
     private WebSocketStompClient webSocketStompClient;
     private EasyRandom generator;
@@ -59,8 +68,19 @@ class GameWSSControllerIntegrationTest {
     public void shouldSendStartGameEvent() throws Exception {
         //Подготовка
         var payload = generator.nextObject(StartGameRequest.class);
-        var expected = new StartGameNotification(payload.getRoomId());
+        var expected = generator.nextObject(StartGameNotification.class);
+        var users = generator.objects(UserEntity.class, 5).collect(Collectors.toList());
+        expected.setRoomId(payload.getRoomId());
+        expected.setParticipants(users.stream().map(UserEntity::getId).collect(Collectors.toUnmodifiableList()));
+        expected.setChance(100);
+        expected.setDuration(100);
+        expected.setQuestionNumber(1);
+
         var future = new CompletableFuture<StartGameNotification>();
+        var room = mock(RoomEntity.class);
+        when(room.getParticipants()).thenReturn(users);
+        when(roomInteractor.getRoomBy(any())).thenReturn(room);
+
         StompSession session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {
         }).get(1, SECONDS);
         //Вызов
@@ -82,7 +102,11 @@ class GameWSSControllerIntegrationTest {
     @Test
     public void shouldSendInflateEvent() throws Exception {
         var payload = generator.nextObject(InflateEventReq.class);
-        var expected = new InflateNotification(payload.getRoomId(), payload.getUserId());
+        var expected = generator.nextObject(InflateNotification.class);
+        expected.setRoomId(payload.getRoomId());
+        expected.setUserId(payload.getUserId());
+        expected.setSize(0.1D);
+
         var future = new CompletableFuture<InflateNotification>();
         StompSession session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {
         }).get(1, SECONDS);
@@ -105,7 +129,9 @@ class GameWSSControllerIntegrationTest {
     @Test
     public void shouldSendEndGameEvent() throws Exception {
         var payload = generator.nextObject(InflateEventReq.class);
-        var expected = new EndGameNotification(payload.getRoomId());
+        var expected = generator.nextObject(EndGameNotification.class);
+        expected.setRoomId(payload.getRoomId());
+        expected.setWinnerId(payload.getUserId());
         var future = new CompletableFuture<>();
         StompSession session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {
         }).get(1, SECONDS);

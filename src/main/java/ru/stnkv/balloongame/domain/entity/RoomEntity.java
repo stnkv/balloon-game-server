@@ -1,9 +1,8 @@
-package ru.stnkv.balloongame.domain.room;
+package ru.stnkv.balloongame.domain.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import ru.stnkv.balloongame.domain.user.UserEntity;
 
 import java.util.Collection;
 

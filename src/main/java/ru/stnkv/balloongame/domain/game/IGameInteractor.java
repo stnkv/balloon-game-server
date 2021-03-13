@@ -1,19 +1,17 @@
 package ru.stnkv.balloongame.domain.game;
 
+import ru.stnkv.balloongame.domain.entity.EndGameEntity;
+
 /**
  * @author ysitnikov
  * @since 13.03.2021
  */
 public interface IGameInteractor {
 
-    String createGame(String roomId);
-
     void sendStartGameEvent(String roomId);
 
-    void sendInflateEventPartitions(String roomId, String senderId);
+    void sendInflateEventPartitions(String roomId, String userId);
 
-    void sendEndGameEvent(String roomId);
-
-    void deleteGame(String roomId);
+    void sendEndGameEvent(EndGameEntity entity);
 
 }

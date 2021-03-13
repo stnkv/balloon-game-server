@@ -1,10 +1,10 @@
 package ru.stnkv.balloongame.domain.room;
 
 import org.springframework.stereotype.Component;
-import ru.stnkv.balloongame.domain.user.UserEntity;
+import ru.stnkv.balloongame.domain.entity.RoomEntity;
+import ru.stnkv.balloongame.domain.entity.UserEntity;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**

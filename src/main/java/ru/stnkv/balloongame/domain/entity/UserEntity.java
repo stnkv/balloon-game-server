@@ -1,4 +1,4 @@
-package ru.stnkv.balloongame.domain.user;
+package ru.stnkv.balloongame.domain.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

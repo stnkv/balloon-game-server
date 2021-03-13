@@ -2,7 +2,13 @@ package ru.stnkv.balloongame.domain.game;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.stnkv.balloongame.domain.entity.EndGameEntity;
+import ru.stnkv.balloongame.domain.entity.InflateEntity;
+import ru.stnkv.balloongame.domain.entity.StartGameEntity;
 import ru.stnkv.balloongame.domain.repository.IGameRepository;
+import ru.stnkv.balloongame.domain.room.IRoomInteractor;
+
+import java.util.List;
 
 /**
  * @author ysitnikov
@@ -15,31 +21,35 @@ public class GameInteractor implements IGameInteractor {
     @Autowired
     private ICheckWinner checkWinner;
 
-    @Override
-    public String createGame(String roomId) {
-        return null;
-    }
+    @Autowired
+    private IRoomInteractor roomInteractor;
 
     @Override
     public void sendStartGameEvent(String roomId) {
-        gameRepository.sendStartGameEvent(roomId);
+        gameRepository.sendStartGameEvent(StartGameEntity.builder()
+                .roomId(roomId)
+                .duration(100)
+                .chance(100)
+                .questionNumber(1)
+                .participants(roomInteractor.getRoomBy(roomId).getParticipants())
+                .build());
     }
 
     @Override
     public void sendInflateEventPartitions(String roomId, String senderId) {
-        gameRepository.sendInflateEventToParcipiants(roomId, senderId);
+        gameRepository.sendInflateEventToParcipiants(InflateEntity.builder()
+                .userId(senderId)
+                .roomId(roomId)
+                .size(0.1D)
+                .build());
         if(checkWinner.check(senderId)) {
-            sendEndGameEvent(roomId);
+            sendEndGameEvent(new EndGameEntity(roomId, senderId));
         }
     }
 
     @Override
-    public void sendEndGameEvent(String roomId) {
-        gameRepository.sendEndGameEvent(roomId);
+    public void sendEndGameEvent(EndGameEntity entity) {
+        gameRepository.sendEndGameEvent(entity);
     }
 
-    @Override
-    public void deleteGame(String roomId) {
-
-    }
 }

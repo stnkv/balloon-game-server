@@ -1,5 +1,7 @@
 package ru.stnkv.balloongame.domain.room;
 
+import ru.stnkv.balloongame.domain.entity.RoomEntity;
+
 import java.util.Collection;
 
 /**

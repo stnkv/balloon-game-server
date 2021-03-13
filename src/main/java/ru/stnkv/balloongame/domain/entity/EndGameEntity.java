@@ -1,4 +1,4 @@
-package ru.stnkv.balloongame.api.game.dto.inflate;
+package ru.stnkv.balloongame.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,8 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class InflateEventReq {
+public class EndGameEntity {
     private String roomId;
-    private String userId;
-    private Double size;
+    private String winnerId;
 }

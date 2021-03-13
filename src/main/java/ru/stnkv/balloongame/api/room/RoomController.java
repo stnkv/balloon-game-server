@@ -1,13 +1,12 @@
 package ru.stnkv.balloongame.api.room;
 
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.stnkv.balloongame.api.room.dto.*;
 import ru.stnkv.balloongame.domain.room.IRoomInteractor;
-import ru.stnkv.balloongame.domain.user.UserEntity;
+import ru.stnkv.balloongame.domain.entity.UserEntity;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

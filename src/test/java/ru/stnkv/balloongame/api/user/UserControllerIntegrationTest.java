@@ -14,7 +14,7 @@ import ru.stnkv.balloongame.api.user.dto.CreateUserRequest;
 import ru.stnkv.balloongame.api.user.dto.CreateUserResponse;
 import ru.stnkv.balloongame.api.user.dto.GetUserResponse;
 import ru.stnkv.balloongame.domain.user.IUserInteractor;
-import ru.stnkv.balloongame.domain.user.UserEntity;
+import ru.stnkv.balloongame.domain.entity.UserEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
