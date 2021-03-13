@@ -17,7 +17,6 @@ import ru.stnkv.balloongame.domain.game.IGameInteractor;
  * @since 12.03.2021
  */
 @RestController
-@RequestMapping("game")
 public class GameController {
     @Autowired
     private IGameInteractor gameInteractor;

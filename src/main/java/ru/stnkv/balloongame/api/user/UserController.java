@@ -28,8 +28,8 @@ public class UserController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<GetUserResponse> create(@RequestParam String id) {
-        var user = userInteractor.getUserById(id);
+    public ResponseEntity<GetUserResponse> get(@RequestParam String userId) {
+        var user = userInteractor.getUserById(userId);
         return new ResponseEntity<>(new GetUserResponse(user.getId(), user.getUsername()), HttpStatus.OK);
     }
 }
