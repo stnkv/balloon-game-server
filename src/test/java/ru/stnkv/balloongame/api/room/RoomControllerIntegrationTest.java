@@ -11,8 +11,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.stnkv.balloongame.api.room.dto.*;
-import ru.stnkv.balloongame.domain.room.IRoomInteractor;
-import ru.stnkv.balloongame.domain.entity.RoomEntity;
+import ru.stnkv.balloongame.data.room.db.RoomDAO;
+import ru.stnkv.balloongame.data.room.db.dto.Room;
+import ru.stnkv.balloongame.data.user.db.UserDAO;
+import ru.stnkv.balloongame.data.user.db.dto.User;
 import ru.stnkv.balloongame.domain.entity.UserEntity;
 
 import java.util.List;
@@ -37,7 +39,9 @@ class RoomControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private IRoomInteractor roomInteractor;
+    private RoomDAO roomDAO;
+    @MockBean
+    private UserDAO userDAO;
 
     private Gson gson;
     private EasyRandom generator;
@@ -53,7 +57,7 @@ class RoomControllerIntegrationTest {
         var participants = generator.objects(UserEntity.class, 5).collect(Collectors.toList());
         var res = generator.nextObject(CreateRoomResponse.class);
         var req = generator.nextObject(CreateRoomRequest.class);
-        when(roomInteractor.create(any())).thenReturn(new RoomEntity(res.getId(), req.getName(), participants));
+        when(roomDAO.save(any())).thenReturn(new Room(res.getId(), req.getName(), participants));
 
         var result = mockMvc.perform(post("/room/create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -70,11 +74,11 @@ class RoomControllerIntegrationTest {
     @Test
     public void shouldGetAllRooms() throws Exception {
         var participants = generator.objects(UserEntity.class, 5).collect(Collectors.toList());
-        var rooms = List.of(new RoomEntity(generator.toString(), generator.toString(), participants));
+        var rooms = List.of(new Room(generator.toString(), generator.toString(), participants));
         var expected = rooms.stream().map(e -> {
             return new RoomResponse(e.getId(), e.getName(), participants.stream().map(u -> new ParticipantResponse(u.getId(), u.getUsername())).collect(Collectors.toUnmodifiableList()));
         }).collect(Collectors.toList());
-        when(roomInteractor.getAllRooms()).thenReturn(rooms);
+        when(roomDAO.findAll()).thenReturn(rooms);
 
         var result = mockMvc.perform(get("/room/list"))
                 .andExpect(status().isOk())
@@ -89,6 +93,11 @@ class RoomControllerIntegrationTest {
     @Test
     public void shouldJoinParticipiantInRoom() throws Exception {
         var participant = generator.nextObject(JoinToRoomRequest.class);
+        var room = generator.nextObject(Room.class);
+        var user = generator.nextObject(User.class);
+        when(userDAO.findById(any())).thenReturn(java.util.Optional.of(user));
+        when(roomDAO.findById(any())).thenReturn(java.util.Optional.of(room));
+        when(roomDAO.save(any())).thenReturn(room);
 
         mockMvc.perform(post("/room/join")
                 .content(gson.toJson(participant))
@@ -99,9 +108,9 @@ class RoomControllerIntegrationTest {
     @Test
     public void shouldGetRoomById() throws Exception {
         var participants = generator.objects(UserEntity.class, 5).collect(Collectors.toList());
-        var room = new RoomEntity(generator.toString(), generator.toString(), participants);
+        var room = new Room(generator.toString(), generator.toString(), participants);
         var expected = new RoomResponse(room.getId(), room.getName(), participants.stream().map(u -> new ParticipantResponse(u.getId(), u.getUsername())).collect(Collectors.toUnmodifiableList()));
-        when(roomInteractor.getRoomBy(expected.getId())).thenReturn(room);
+        when(roomDAO.findById(any())).thenReturn(java.util.Optional.of(room));
 
         var result = mockMvc.perform(get("/room/get").param("id", expected.getId()))
                 .andExpect(status().isOk())

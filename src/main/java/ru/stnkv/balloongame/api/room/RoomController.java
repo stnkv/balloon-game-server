@@ -9,6 +9,7 @@ import ru.stnkv.balloongame.domain.room.IRoomInteractor;
 import ru.stnkv.balloongame.domain.entity.UserEntity;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 /**
@@ -38,17 +39,20 @@ public class RoomController {
     }
 
     @PostMapping("/join")
-    public void join(@RequestBody JoinToRoomRequest request) {
+    public void join(@RequestBody JoinToRoomRequest request) throws Exception {
         roomInteractor.join(request.getRoomId(), request.getUserId());
     }
 
     @GetMapping("/get")
-    public ResponseEntity<RoomResponse> getBy(@RequestParam String id) {
+    public ResponseEntity<RoomResponse> getBy(@RequestParam String id) throws Exception {
         var room = roomInteractor.getRoomBy(id);
         return new ResponseEntity<>(new RoomResponse(room.getId(), room.getName(), convert(room.getParticipants())), HttpStatus.OK);
     }
 
     private Collection<ParticipantResponse> convert(Collection<UserEntity> users) {
+        if (users == null || users.isEmpty()) {
+            return Collections.emptyList();
+        }
         return users.stream().map(u -> new ParticipantResponse(u.getId(), u.getUsername())).collect(Collectors.toUnmodifiableList());
     }
 }

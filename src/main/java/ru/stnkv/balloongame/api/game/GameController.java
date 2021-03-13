@@ -18,7 +18,7 @@ public class GameController {
     private IGameInteractor gameInteractor;
 
     @MessageMapping("/game/start")
-    public void processStartGame(@Payload StartGameRequest request) {
+    public void processStartGame(@Payload StartGameRequest request) throws Exception {
         gameInteractor.sendStartGameEvent(request.getRoomId());
     }
 

@@ -1,8 +1,12 @@
 package ru.stnkv.balloongame.domain.room;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.stnkv.balloongame.domain.entity.CreateRoomEntity;
 import ru.stnkv.balloongame.domain.entity.RoomEntity;
 import ru.stnkv.balloongame.domain.entity.UserEntity;
+import ru.stnkv.balloongame.domain.repository.IRoomRepository;
+import ru.stnkv.balloongame.domain.repository.IUserRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,27 +17,31 @@ import java.util.List;
  */
 @Component
 public class RoomInteractor implements IRoomInteractor {
+    @Autowired
+    private IRoomRepository roomRepository;
+
+    @Autowired
+    private IUserRepository userRepository;
+
     @Override
     public RoomEntity create(String name) {
-        var par = List.of(new UserEntity("1", "username"), new UserEntity("2", "username"), new UserEntity("3", "username"));
-        return new RoomEntity("1", name, par);
+        return roomRepository.create(new CreateRoomEntity(name));
     }
 
     @Override
-    public void join(String roomId, String userId) {
-        //TODO: РЕАЛИЗОВАТЬ
+    public void join(String roomId, String userId) throws Exception {
+        RoomEntity entity = roomRepository.getRoomBy(roomId);
+        UserEntity user = userRepository.getUserById(userId);
+        roomRepository.join(entity, user);
     }
 
     @Override
     public Collection<RoomEntity> getAllRooms() {
-        var par = List.of(new UserEntity("1", "username"), new UserEntity("2", "username"), new UserEntity("3", "username"));
-        var par2 = List.of(new UserEntity("4", "username"), new UserEntity("5", "username"), new UserEntity("6", "username"));
-        return List.of(new RoomEntity("1", "roomname", par), new RoomEntity("2", "roomname", par));
+        return roomRepository.getAllRooms();
     }
 
     @Override
-    public RoomEntity getRoomBy(String id) {
-        var par = List.of(new UserEntity("1", "username"), new UserEntity("2", "username"), new UserEntity("3", "username"));
-        return new RoomEntity(id, "roomname", par);
+    public RoomEntity getRoomBy(String id) throws Exception {
+        return roomRepository.getRoomBy(id);
     }
 }

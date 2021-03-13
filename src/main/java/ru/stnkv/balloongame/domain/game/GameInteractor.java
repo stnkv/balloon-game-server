@@ -25,7 +25,7 @@ public class GameInteractor implements IGameInteractor {
     private IRoomInteractor roomInteractor;
 
     @Override
-    public void sendStartGameEvent(String roomId) {
+    public void sendStartGameEvent(String roomId) throws Exception {
         gameRepository.sendStartGameEvent(StartGameEntity.builder()
                 .roomId(roomId)
                 .duration(100)

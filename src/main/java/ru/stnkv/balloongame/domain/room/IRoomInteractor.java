@@ -11,7 +11,7 @@ import java.util.Collection;
 public interface IRoomInteractor {
 
     RoomEntity create(String name);
-    void join(String roomId, String userId);
+    void join(String roomId, String userId) throws Exception;
     Collection<RoomEntity> getAllRooms();
-    RoomEntity getRoomBy(String id);
+    RoomEntity getRoomBy(String id) throws Exception;
 }

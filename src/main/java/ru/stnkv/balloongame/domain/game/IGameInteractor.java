@@ -8,7 +8,7 @@ import ru.stnkv.balloongame.domain.entity.EndGameEntity;
  */
 public interface IGameInteractor {
 
-    void sendStartGameEvent(String roomId);
+    void sendStartGameEvent(String roomId) throws Exception;
 
     void sendInflateEventPartitions(String roomId, String userId);
 
