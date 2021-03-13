@@ -46,12 +46,13 @@ public class GameInteractor implements IGameInteractor {
     @Override
     public void sendInflateEventPartitions(String roomId, String senderId, Double size) {
         //TODO: Проверка что игра в статусе готова к страрту
-        gameRepository.sendInflateEventToParcipiants(InflateEntity.builder()
+        var inflateEntity = InflateEntity.builder()
                 .userId(senderId)
                 .roomId(roomId)
                 .size(size)
-                .build());
-        if(checkWinner.check(senderId)) {
+                .build();
+        gameRepository.sendInflateEventToParcipiants(inflateEntity);
+        if (checkWinner.check(inflateEntity)) {
             sendEndGameEvent(new EndGameEntity(roomId, senderId));
         }
     }
