@@ -8,11 +8,11 @@ public interface IGameInteractor {
 
     String createGame(String roomId);
 
-    void sendStartGameEvent();
+    void sendStartGameEvent(String roomId);
 
-    void sendEventPartitions();
+    void sendInflateEventPartitions(String roomId, String senderId);
 
-    void sendEndGameEvent();
+    void sendEndGameEvent(String roomId);
 
     void deleteGame(String roomId);
 

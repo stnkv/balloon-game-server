@@ -1,4 +1,4 @@
-package ru.stnkv.balloongame.api.game.dto;
+package ru.stnkv.balloongame.api.game.dto.start;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StartGameNotification {
+public class ConfirmStartGameReq {
     private String roomId;
 }

@@ -1,7 +1,6 @@
 package ru.stnkv.balloongame.api.game;
 
 import org.jeasy.random.EasyRandom;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,12 +15,15 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
-import ru.stnkv.balloongame.api.game.dto.*;
+import ru.stnkv.balloongame.api.game.dto.inflate.InflateEventReq;
+import ru.stnkv.balloongame.api.game.dto.start.StartGameRequest;
+import ru.stnkv.balloongame.data.game.dto.EndGameNotification;
+import ru.stnkv.balloongame.data.game.dto.InflateNotification;
+import ru.stnkv.balloongame.data.game.dto.StartGameNotification;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -72,6 +74,52 @@ class GameControllerIntegrationTest {
         });
         session.send("/app/game/start", payload);
         //Проверка
+        Assertions.assertEquals(expected, future.get(1, SECONDS));
+    }
+
+    @Test
+    public void shouldSendInflateEvent() throws Exception {
+        var payload = generator.nextObject(InflateEventReq.class);
+        var expected = new InflateNotification(payload.getRoomId(), payload.getUserId());
+        var future = new CompletableFuture<InflateNotification>();
+        StompSession session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {
+        }).get(1, SECONDS);
+
+        session.subscribe("/game/"+ payload.getRoomId() +"/inflate/events", new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return InflateNotification.class;
+            }
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                future.complete((InflateNotification) payload);
+            }
+        });
+        session.send("/app/game/inflate", payload);
+
+        Assertions.assertEquals(expected, future.get(1, SECONDS));
+    }
+
+    @Test
+    public void shouldSendEndGameEvent() throws Exception {
+        var payload = generator.nextObject(InflateEventReq.class);
+        var expected = new EndGameNotification(payload.getRoomId());
+        var future = new CompletableFuture<>();
+        StompSession session = webSocketStompClient.connect(getWsPath(), new StompSessionHandlerAdapter() {
+        }).get(1, SECONDS);
+
+        session.subscribe("/game/"+ payload.getRoomId() +"/end/events", new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return EndGameNotification.class;
+            }
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                future.complete((EndGameNotification) payload);
+            }
+        });
+        session.send("/app/game/inflate", payload);
+
         Assertions.assertEquals(expected, future.get(1, SECONDS));
     }
 

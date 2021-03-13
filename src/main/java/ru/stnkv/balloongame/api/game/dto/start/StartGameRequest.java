@@ -1,4 +1,4 @@
-package ru.stnkv.balloongame.api.game.dto;
+package ru.stnkv.balloongame.api.game.dto.start;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
