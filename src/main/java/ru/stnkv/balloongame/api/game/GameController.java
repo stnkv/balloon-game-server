@@ -1,15 +1,13 @@
 package ru.stnkv.balloongame.api.game;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.HtmlUtils;
+import ru.stnkv.balloongame.api.game.dto.ChatMessage;
+import ru.stnkv.balloongame.api.game.dto.ChatNotification;
+import ru.stnkv.balloongame.api.game.dto.HelloMessage;
 
 /**
  * @author ysitnikov
@@ -24,6 +22,7 @@ public class GameController {
 
     @MessageMapping("/chat")
     public void processMessage(@Payload ChatMessage chatMessage) {
+
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getRecipientId(),"/queue/messages",
                 new ChatNotification(
