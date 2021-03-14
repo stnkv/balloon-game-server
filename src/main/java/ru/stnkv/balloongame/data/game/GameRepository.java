@@ -32,6 +32,7 @@ public class GameRepository implements IGameRepository {
                 .participants(entity.getParticipants().stream().map(UserEntity::getId).collect(Collectors.toUnmodifiableList()))
                 .questionNumber(entity.getQuestionNumber())
                 .build());
+        System.out.println("send /start/events ");
     }
 
     @Override
@@ -46,6 +47,7 @@ public class GameRepository implements IGameRepository {
                 .userId(entity.getUserId())
                 .size(entity.getSize())
                 .build());
+        System.out.println("send /inflate/events ");
     }
 
     @Override
@@ -54,5 +56,6 @@ public class GameRepository implements IGameRepository {
                 .roomId(entity.getRoomId())
                 .winnerId(entity.getWinnerId())
                 .build());
+        System.out.println("send /end/events ");
     }
 }

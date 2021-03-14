@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 public class GetChanceDefault implements IGetChance{
     @Override
     public int get() {
-        int min = 0;
-        int max = 100;
+        int min = 10;
+        int max = 60;
         return (int) ((Math.random() * (max - min)) + min);
     }
 }
